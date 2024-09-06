@@ -1,7 +1,12 @@
 name: Python Testing
 run-name: ${{ github.actor }} started the testing action
 
-on: [push]
+on:
+  push:
+    branches:
+      - 'dev'
+    paths:
+      - '.github/workflows/action.yaml'
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
