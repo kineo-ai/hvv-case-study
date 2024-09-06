@@ -6,6 +6,7 @@ def load_data(filepath: str) -> pd.DataFrame:
 
 
 def calculate_country_stats(df: pd.DataFrame, country: str) -> dict | None:
+    rounding_digits = 5
     data_filtered = df[df["Entity"] == country]
 
     if data_filtered.empty:
@@ -25,9 +26,9 @@ def calculate_country_stats(df: pd.DataFrame, country: str) -> dict | None:
     for metric in metrics:
         values = data_filtered[metric].dropna()
         results[metric] = {
-            "average": round(values.mean(), 2),
-            "median": round(values.median(), 2),
-            "std_dev": round(values.std(), 2),
+            "average": round(values.mean(), rounding_digits),
+            "median": round(values.median(), rounding_digits),
+            "std_dev": round(values.std(), rounding_digits),
         }
 
     return results
