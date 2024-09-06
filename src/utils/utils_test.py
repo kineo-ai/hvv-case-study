@@ -30,6 +30,8 @@ def random_years() -> int:
 
 
 def relative_error(expected, actual) -> float:
+    if expected == actual:
+        return 0
     return abs((expected - actual) / expected)
 
 
