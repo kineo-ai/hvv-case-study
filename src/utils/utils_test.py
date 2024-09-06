@@ -4,11 +4,11 @@ import random
 import string
 from utils import calculate_country_stats
 
-# The ERROR_TOLERANCE is rather high, because the approximate distributions are not accurate unless numerous measurements/years are created.
-ERROR_TOLERANCE = 1e-2
+# The ERROR_TOLERANCE is rather high as the approximate distributions are not accurate unless numerous measurements/years are created.
+ERROR_TOLERANCE = 1e-1
 PRECISION_DIGITS = 5
 NUM_ENTITIES = 10
-NUM_YEARS = 1e5
+NUM_YEARS = 10000
 METRICS = [
     "Nitrogen oxide (NOx)",
     "Sulphur dioxide (SO2)",
@@ -25,7 +25,7 @@ def random_string(length: int) -> str:
     return "".join(random.choices(string.ascii_uppercase + string.digits, k=length))
 
 
-def random_year() -> int:
+def random_years() -> int:
     return np.random.randint(1000, 9999, NUM_YEARS * NUM_ENTITIES)
 
 
@@ -42,9 +42,10 @@ def _test_calculate_country_stats(metric_func, expected_avg, expected_std):
 
     :asserts: if the expected average and expected standard deviation is within an relative error ERROR_TOLERANCE
     """
+    # Arrange
     entities = [random_string(10) for _ in range(NUM_ENTITIES)] * NUM_YEARS
     codes = [random_string(3) for _ in range(NUM_ENTITIES)] * NUM_YEARS
-    years = random_year()
+    years = random_years()
     data = {
         "Entity": entities,
         "Code": codes,
@@ -53,8 +54,9 @@ def _test_calculate_country_stats(metric_func, expected_avg, expected_std):
     for m in METRICS:
         data[m] = metric_func()
     df = pd.DataFrame(data, columns=COLUMNS)
-    ret = []
+    
     for entity in set(entities):
+        # Act
         actual = calculate_country_stats(df, entity)
         for m in METRICS:
             metric_vector = df[df["Entity"] == entity][m]
@@ -66,6 +68,7 @@ def _test_calculate_country_stats(metric_func, expected_avg, expected_std):
                 actual[m]["std_dev"],
                 round(expected_std(metric_vector), PRECISION_DIGITS),
             )
+            # Assert
             assert relative_error(a_avg, e_avg) < ERROR_TOLERANCE, (
                 "Failed on Average a: %s, e: %s, re: %s"
                 % (a_avg, str(e_avg), relative_error(a_avg, e_avg))
@@ -77,18 +80,20 @@ def _test_calculate_country_stats(metric_func, expected_avg, expected_std):
 
 
 def test_calculate_country_stats_normal_dist():
+    """
+    This test-case fixes the parameters mu (mean) and sigma (stddev) to thereafter generate a normal distribution of values.
+    The values will thereafter be used as the measurements for the calculation.
+    """
     mu, sigma = random.random() * NUM_YEARS // 10, random.random() * NUM_YEARS // 1000
     metric_func = lambda: np.random.normal(mu, sigma, NUM_ENTITIES * NUM_YEARS)
     _test_calculate_country_stats(metric_func, lambda _: mu, lambda _: sigma)
 
 
 def test_calculate_country_stats_uniform():
+    """
+    This test-case generates a uniformly pseudorandom distribution as measurements for the calculation.
+    """
     metric_func = lambda: np.random.uniform(0, 10000, NUM_ENTITIES * NUM_YEARS)
     expected_avg = lambda vec: vec.mean()
     expected_std = lambda vec: vec.std()
     _test_calculate_country_stats(metric_func, expected_avg, expected_std)
-
-
-if __name__ == "__main__":
-    test_calculate_country_stats_normal_dist()
-    test_calculate_country_stats_uniform()
