@@ -4,10 +4,11 @@ import random
 import string
 from utils import calculate_country_stats
 
+# The ERROR_TOLERANCE is rather high, because the approximate distributions are not accurate unless numerous measurements/years are created.
 ERROR_TOLERANCE = 1e-2
 PRECISION_DIGITS = 5
 NUM_ENTITIES = 10
-NUM_YEARS = 10000
+NUM_YEARS = 1e5
 METRICS = ["Nitrogen oxide (NOx)","Sulphur dioxide (SO2)","Carbon monoxide (CO)","Organic carbon (OC)","Non-methane volatile organic compounds (NMVOC)","Black carbon (BC)","Ammonia (NH3)"]
 COLUMNS = ["Entity","Code","Year"].extend(METRICS)
 
