@@ -1,5 +1,5 @@
 name: Python Testing
-run-name: ${{ github.actor }} started the testing action
+run-name: Running tests, triggered by ${{ github.actor }}
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  test:
+  Tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
