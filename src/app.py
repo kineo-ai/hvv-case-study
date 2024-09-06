@@ -28,7 +28,7 @@ def get_country_pollution_stats():
 
 @app.route("/", methods=["GET"])
 def root():
-    return jsonify({"message": "Hello, World!"})
+    return "ok"
 
 
 if __name__ == "__main__":
