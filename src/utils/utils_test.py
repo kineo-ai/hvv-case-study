@@ -33,7 +33,7 @@ def relative_error(expected, actual) -> float:
     return abs((expected - actual) / expected)
 
 
-def _test_calculate_country_stats(metric_func, expected_avg, expected_std):
+def _test_calculate_country_stats(metric_func, expected_avg, expected_std, expected_median):
     """
     Generic helper function for calling the calculate_stats function.
     :param metric_func: A function that is used to generate the randomised values.
@@ -64,6 +64,10 @@ def _test_calculate_country_stats(metric_func, expected_avg, expected_std):
                 actual[m]["average"],
                 round(expected_avg(metric_vector), PRECISION_DIGITS),
             )
+            a_median, e_median = (
+                actual[m]["median"],
+                round(expected_median(metric_vector), PRECISION_DIGITS),
+            )
             a_std, e_std = (
                 actual[m]["std_dev"],
                 round(expected_std(metric_vector), PRECISION_DIGITS),
@@ -72,6 +76,11 @@ def _test_calculate_country_stats(metric_func, expected_avg, expected_std):
             assert relative_error(a_avg, e_avg) < ERROR_TOLERANCE, (
                 "Failed on Average a: %s, e: %s, re: %s"
                 % (a_avg, str(e_avg), relative_error(a_avg, e_avg))
+            )
+
+            assert relative_error(a_median, e_median) < ERROR_TOLERANCE, (
+                "Failed on Median a: %s, e: %s, re: %s"
+                % (a_median, str(e_median), relative_error(a_median, e_median))
             )
             assert relative_error(a_std, e_std) < ERROR_TOLERANCE, (
                 "Failed on Standard Deviation a: %s, e: %s, re: %s"
@@ -86,7 +95,7 @@ def test_calculate_country_stats_normal_dist():
     """
     mu, sigma = random.random() * NUM_YEARS // 10, random.random() * NUM_YEARS // 1000
     metric_func = lambda: np.random.normal(mu, sigma, NUM_ENTITIES * NUM_YEARS)
-    _test_calculate_country_stats(metric_func, lambda _: mu, lambda _: sigma)
+    _test_calculate_country_stats(metric_func, lambda _: mu, lambda _: sigma, lambda vec: vec.median())
 
 
 def test_calculate_country_stats_uniform():
@@ -95,5 +104,6 @@ def test_calculate_country_stats_uniform():
     """
     metric_func = lambda: np.random.uniform(0, 10000, NUM_ENTITIES * NUM_YEARS)
     expected_avg = lambda vec: vec.mean()
+    expected_median = lambda vec: vec.median()
     expected_std = lambda vec: vec.std()
-    _test_calculate_country_stats(metric_func, expected_avg, expected_std)
+    _test_calculate_country_stats(metric_func, expected_avg, expected_std, expected_median)
