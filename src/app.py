@@ -16,7 +16,7 @@ def get_country_pollution_stats():
         country = None
 
     if not country:
-        return jsonify({"error": "Please provide a country name"}), 400
+        return jsonify({"error": "Could not parse country name"}), 400
 
     country_stats = calculate_country_stats(df, country)
 
