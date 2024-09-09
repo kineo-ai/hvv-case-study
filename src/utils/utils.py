@@ -2,6 +2,7 @@ import pandas as pd
 
 
 def load_data(filepath: str) -> pd.DataFrame:
+    # Missing preprocessing steps to prepare the dataset for analysis
     return pd.read_csv(filepath)
 
 
@@ -15,9 +16,20 @@ def calculate_country_stats(df: pd.DataFrame, country: str) -> dict | None:
     """
     data_filtered = df[df["Entity"] == country]
 
-    results = get_stats(data_filtered)
+    return get_stats(data_filtered)
 
-    return results
+
+def calculate_year_stats(df: pd.DataFrame, year: int) -> dict | None:
+    """
+    Get the average, median, and standard deviation of air pollution metrics for all countries in a given year.
+
+    :param df: A pandas DataFrame containing the air pollution data.
+    :param year: An integer representing the year.
+    :return: A dictionary containing the average, median, and standard deviation of air pollution metrics for all countries in the given year or `None` if no data is found.
+    """
+    data_filtered = df[df["Year"] == year]
+
+    return get_stats(data_filtered)
 
 
 def get_stats(df: pd.DataFrame) -> dict | None:
@@ -44,7 +56,7 @@ def get_stats(df: pd.DataFrame) -> dict | None:
     stats = {}
 
     for metric in metrics:
-        values = df[metric].dropna()
+        values = df[metric].dropna()  # This would be better in a data preprocessing step
         stats[metric] = {
             "average": round(values.mean(), rounding_digits),
             "median": round(values.median(), rounding_digits),

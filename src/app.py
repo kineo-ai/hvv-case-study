@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from utils.utils import load_data, calculate_country_stats
+from utils.utils import load_data, calculate_country_stats, calculate_year_stats
 
 app = Flask(__name__)
 
@@ -24,6 +24,24 @@ def get_country_pollution_stats():
         return jsonify({"error": f"No data found for {country}"}), 404
 
     return jsonify({"country": country, "statistics": country_stats})
+
+
+@app.route("/api/v1/year", methods=["GET"])
+def get_year_pollution_stats():
+    try:
+        year = int(request.args.get("value"))
+    except (TypeError, ValueError):
+        year = None
+
+    if not year:
+        return jsonify({"error": "Could not parse year"}), 400
+
+    year_stats = calculate_year_stats(df, year)
+
+    if year_stats is None:
+        return jsonify({"error": f"No data found for {year}"}), 404
+
+    return jsonify({"year": year, "statistics": year_stats})
 
 
 @app.route("/", methods=["GET"])
