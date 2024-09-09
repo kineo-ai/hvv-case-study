@@ -11,12 +11,19 @@ def calculate_country_stats(df: pd.DataFrame, country: str) -> dict | None:
 
     :param df: A pandas DataFrame containing the air pollution data.
     :param country: A string representing the country name.
-    :return: A dictionary containing the average, median, and standard deviation of air pollution metrics for the given country or None if no data is found.
+    :return: A dictionary containing the average, median, and standard deviation of air pollution metrics for the given country or `None` if no data is found.
     """
-    rounding_digits = 5
     data_filtered = df[df["Entity"] == country]
 
-    if data_filtered.empty:
+    results = get_stats(data_filtered)
+
+    return results
+
+
+def get_stats(df: pd.DataFrame) -> dict | None:
+    rounding_digits = 5
+
+    if df.empty:
         return None
 
     metrics = [
@@ -28,14 +35,14 @@ def calculate_country_stats(df: pd.DataFrame, country: str) -> dict | None:
         "Black carbon (BC)",
         "Ammonia (NH3)",
     ]
-    results = {}
+    stats = {}
 
     for metric in metrics:
-        values = data_filtered[metric].dropna()
-        results[metric] = {
+        values = df[metric].dropna()
+        stats[metric] = {
             "average": round(values.mean(), rounding_digits),
             "median": round(values.median(), rounding_digits),
             "std_dev": round(values.std(), rounding_digits),
         }
 
-    return results
+    return stats
