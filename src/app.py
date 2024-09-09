@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 
 # Load dataset
-df = load_data("data/air-pollution.csv")
+df = load_data("./data/air-pollution.csv")
 
 
 @app.route("/api/v1/country", methods=["GET"])
