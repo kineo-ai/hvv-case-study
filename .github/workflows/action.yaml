@@ -9,12 +9,27 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
+  CheckFormatting:
+    name: Check Formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+      - name: Install Ruff
+        run: pip install ruff
+      - name: Check formatting with Ruff
+        run: ruff check --output-format=github .
   DockerBuildPush:
     name: Push Docker image to Github Registry
     runs-on: ubuntu-latest
+    needs: [CheckFormatting]
     outputs:
       tags: ${{ steps.meta.outputs.tags }}
-      labels: ${{ steps.meta.outputs.labels }}
     permissions:
       packages: write
       contents: read
@@ -38,25 +53,24 @@ jobs:
         id: push
         uses: docker/build-push-action@v5
         with:
-          context: ./images/base
+          context: .
+          file: ./images/base/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ghcr.io/${{ github.repository }}:latest
+          labels: steps.meta.outputs.labels
+          # We would use versions for a production system in order to keep a clear history of images. However, for the sake of Github Package storage limits we will reuse the latest tag.
+          #tags: steps.meta.outputs.tags
 
   Tests:
     runs-on: ubuntu-latest
     needs: [DockerBuildPush]
     container:
-      image: ghcr.io/${{ github.repository }}/:${{ needs.DockerBuildPush.outputs.labels }}
+      image: ghcr.io/${{ github.repository }}:latest
     steps:
-      - uses: actions/checkout@v4
-      - run: |
-          # Install base app requirements
-          pip install -r ./test/requirements.txt
+      - name: Checkout
+        uses: actions/checkout@v4
+      - run: |  
           # Install testing related requirements
           pip install pytest pytest-cov
-      - run: pytest --cov=. --cov-report=term
-      - name: Check formatting with Ruff
-        run: |
-          pip install ruff
-          ruff check --output-format=github .
+      - name: Run Pytest
+        run: pytest --cov=. --cov-report=term
