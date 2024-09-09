@@ -7,7 +7,7 @@ def load_data(filepath: str) -> pd.DataFrame:
 
 def calculate_country_stats(df: pd.DataFrame, country: str) -> dict | None:
     """
-    Calculate the average, median, and standard deviation of air pollution metrics for a given country over the years.
+    Get the average, median, and standard deviation of air pollution metrics for a given country over the years.
 
     :param df: A pandas DataFrame containing the air pollution data.
     :param country: A string representing the country name.
@@ -21,6 +21,12 @@ def calculate_country_stats(df: pd.DataFrame, country: str) -> dict | None:
 
 
 def get_stats(df: pd.DataFrame) -> dict | None:
+    """
+    Calculate the average, median, and standard deviation of air pollution metrics
+
+    :param df: A pandas DataFrame containing the air pollution data.
+    :return: A dictionary containing the average, median, and standard deviation of air pollution metrics or `None` if the DataFrame is empty.
+    """
     rounding_digits = 5
 
     if df.empty:
