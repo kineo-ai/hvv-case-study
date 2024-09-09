@@ -1,0 +1,63 @@
+name: Deploying On Merge when tests pass
+run-name: Running tests, triggered by ${{ github.actor }}
+
+on:
+  push:
+    branches:
+      - 'dev'
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  Tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: 'pip'
+      - name: Install testing related requirements
+        run: |
+          pip install -r ./images/base/requirements.txt
+          pip install pytest pytest-cov
+      - name: Run Pytest
+        run: pytest --cov=. --cov-report=term
+  DockerBuildPush:
+    name: Push Docker image to Github Registry
+    runs-on: ubuntu-latest
+    needs: [Tests]
+    outputs:
+      tags: ${{ steps.meta.outputs.tags }}
+    permissions:
+      packages: write
+      contents: read
+      attestations: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Log to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract Docker Metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ github.repository }}
+      - name: Build and Push Docker Image
+        id: push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./images/base/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}:latest
+          labels: steps.meta.outputs.labels
+          # We would use versions for a production system in order to keep a clear history of images. However, for the sake of Github Package storage limits we will reuse the latest tag.
+          #tags: steps.meta.outputs.tags
