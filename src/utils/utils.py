@@ -2,6 +2,7 @@ import pandas as pd
 
 
 def load_data(filepath: str) -> pd.DataFrame:
+    # Missing preprocessing steps to prepare the dataset for analysis
     return pd.read_csv(filepath)
 
 
@@ -55,7 +56,7 @@ def get_stats(df: pd.DataFrame) -> dict | None:
     stats = {}
 
     for metric in metrics:
-        values = df[metric].dropna()
+        values = df[metric].dropna()  # This would be better in a data preprocessing step
         stats[metric] = {
             "average": round(values.mean(), rounding_digits),
             "median": round(values.median(), rounding_digits),
