@@ -57,7 +57,9 @@ def get_stats(df: pd.DataFrame) -> dict | None:
     stats = {}
 
     for metric in metrics:
-        values = df[metric].dropna()  # This would be better in a data preprocessing step
+        values = df[
+            metric
+        ].dropna()  # This would be better in a data preprocessing step
         stats[metric] = {
             "average": round(values.mean(), PRECISION_DIGITS),
             "median": round(values.median(), PRECISION_DIGITS),

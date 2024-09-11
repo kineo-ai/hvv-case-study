@@ -35,7 +35,9 @@ def relative_error(expected, actual) -> float:
     return abs((expected - actual) / expected)
 
 
-def _test_calculate_country_stats(metric_func, expected_avg, expected_median, expected_std):
+def _test_calculate_country_stats(
+    metric_func, expected_avg, expected_median, expected_std
+):
     """
     Generic helper function for calling the calculate_stats function.
     :param metric_func: A function that is used to generate the randomised values.
@@ -56,7 +58,7 @@ def _test_calculate_country_stats(metric_func, expected_avg, expected_median, ex
     for m in METRICS:
         data[m] = metric_func()
     df = pd.DataFrame(data, columns=COLUMNS)
-    
+
     for entity in set(entities):
         # Act
         actual = calculate_country_stats(df, entity)
@@ -96,19 +98,41 @@ def test_calculate_country_stats_normal_dist():
     The values will thereafter be used as the measurements for the calculation.
     """
     mu, sigma = random.random() * NUM_YEARS // 10, random.random() * NUM_YEARS // 1000
-    def metric_func(): return np.random.normal(mu, sigma, NUM_ENTITIES * NUM_YEARS)
-    def expected_avg(vec): return mu
-    def expected_median(vec): return vec.median()
-    def expected_std(vec): return sigma
-    _test_calculate_country_stats(metric_func, expected_avg, expected_median, expected_std )
+
+    def metric_func():
+        return np.random.normal(mu, sigma, NUM_ENTITIES * NUM_YEARS)
+
+    def expected_avg(vec):
+        return mu
+
+    def expected_median(vec):
+        return vec.median()
+
+    def expected_std(vec):
+        return sigma
+
+    _test_calculate_country_stats(
+        metric_func, expected_avg, expected_median, expected_std
+    )
 
 
 def test_calculate_country_stats_uniform():
     """
     This test-case generates a uniformly pseudorandom distribution as measurements for the calculation.
     """
-    def metric_func(): return np.random.uniform(0, 10000, NUM_ENTITIES * NUM_YEARS)
-    def expected_avg(vec): return vec.mean()
-    def expected_median(vec): return vec.median()
-    def expected_std(vec): return vec.std()
-    _test_calculate_country_stats(metric_func, expected_avg, expected_median, expected_std)
+
+    def metric_func():
+        return np.random.uniform(0, 10000, NUM_ENTITIES * NUM_YEARS)
+
+    def expected_avg(vec):
+        return vec.mean()
+
+    def expected_median(vec):
+        return vec.median()
+
+    def expected_std(vec):
+        return vec.std()
+
+    _test_calculate_country_stats(
+        metric_func, expected_avg, expected_median, expected_std
+    )
