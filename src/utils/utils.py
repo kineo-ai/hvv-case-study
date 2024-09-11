@@ -4,8 +4,21 @@ PRECISION_DIGITS = 5
 
 
 def load_data(filepath: str) -> pd.DataFrame:
-    # Missing preprocessing steps to prepare the dataset for analysis
-    return pd.read_csv(filepath)
+    """
+    Load the data from the CSV file and filter out the continents and income groups
+
+    After  checking the data, we found some entities that are not countries, e.g. "Africa", "Asia", "Europe", "North America", "Oceania", "South America", "High-income countries", "Low-income countries", "Lower-middle-income countries", "Upper-middle-income countries", "World".
+    We will filter out these entities to focus on the countries.
+
+    :param filepath: A string representing the path to the CSV file.
+    :return: A pandas DataFrame containing the air pollution data.
+    """
+    df = pd.read_csv(filepath)
+    continents_income_filter = ~df["Entity"].isin(["Africa", "Asia", "Europe", "North America", "Oceania", "South America", "High-income countries", "Low-income countries", "Lower-middle-income countries", "Upper-middle-income countries", "World"])
+
+    filtered_df = df[continents_income_filter].copy()
+
+    return filtered_df
 
 
 def calculate_country_stats(df: pd.DataFrame, country: str) -> dict | None:
