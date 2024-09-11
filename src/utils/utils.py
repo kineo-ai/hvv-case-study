@@ -1,5 +1,7 @@
 import pandas as pd
 
+PRECISION_DIGITS = 5
+
 
 def load_data(filepath: str) -> pd.DataFrame:
     # Missing preprocessing steps to prepare the dataset for analysis
@@ -39,7 +41,6 @@ def get_stats(df: pd.DataFrame) -> dict | None:
     :param df: A pandas DataFrame containing the air pollution data.
     :return: A dictionary containing the average, median, and standard deviation of air pollution metrics or `None` if the DataFrame is empty.
     """
-    rounding_digits = 5
 
     if df.empty:
         return None
@@ -56,11 +57,13 @@ def get_stats(df: pd.DataFrame) -> dict | None:
     stats = {}
 
     for metric in metrics:
-        values = df[metric].dropna()  # This would be better in a data preprocessing step
+        values = df[
+            metric
+        ].dropna()  # This would be better in a data preprocessing step
         stats[metric] = {
-            "average": round(values.mean(), rounding_digits),
-            "median": round(values.median(), rounding_digits),
-            "std_dev": round(values.std(), rounding_digits),
+            "average": round(values.mean(), PRECISION_DIGITS),
+            "median": round(values.median(), PRECISION_DIGITS),
+            "std_dev": round(values.std(), PRECISION_DIGITS),
         }
 
     return stats

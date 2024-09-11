@@ -14,7 +14,6 @@
     * runs a sample test suite of the application, if successful
     * builds the application using [Docker](https://www.docker.com) and push it to a [Github Container registry](https://github.com/kineo-ai/hvv-case-study/pkgs/container/hvv-case-study).
 
-
 ### Authentication
 For self-managed authentication, [Keycloak](https://github.com/keycloak/keycloak) could be used. It allows for user management out-of-the-box, service-to-service communication as well as OAuth-flows. This solution is readily extensible and gives Administrators and Operators control over the whole authentication process.
 
