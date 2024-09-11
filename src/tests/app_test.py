@@ -20,7 +20,8 @@ def client():
 
 def test_country_endpoint_valid(client):
     # Make a request to the /api/v1/country endpoint
-    response = client.get("/api/v1/country?name=Germany")
+    country = "Germany"
+    response = client.get(f"/api/v1/country?name={country}")
 
     assert response.status_code == 200
 
@@ -28,7 +29,7 @@ def test_country_endpoint_valid(client):
 
     # Check the 'country' field
     assert "country" in data
-    assert data["country"] == "Germany"
+    assert data["country"] == country
 
     # Check that 'statistics' field exists
     assert "statistics" in data
@@ -41,7 +42,7 @@ def test_country_endpoint_valid(client):
             assert stat in data["statistics"][metric]
 
             # Check that the values are floats
-            assert isinstance(data["statistics"][metric][stat], (float, int))
+            assert isinstance(data["statistics"][metric][stat], float)
 
 
 def test_country_endpoint_invalid(client):
@@ -53,7 +54,8 @@ def test_country_endpoint_invalid(client):
 
 
 def test_year_endpoint_valid(client):
-    response = client.get("/api/v1/year?value=2000")
+    year = 2000
+    response = client.get(f"/api/v1/year?value={year}")
 
     assert response.status_code == 200
 
@@ -61,7 +63,7 @@ def test_year_endpoint_valid(client):
 
     # Check the 'year' field
     assert "year" in data
-    assert data["year"] == 2000
+    assert data["year"] == year
 
     # Check that 'statistics' field exists
     assert "statistics" in data
@@ -74,7 +76,7 @@ def test_year_endpoint_valid(client):
             assert stat in data["statistics"][metric]
 
             # Check that the values are floats
-            assert isinstance(data["statistics"][metric][stat], (float, int))
+            assert isinstance(data["statistics"][metric][stat], float)
 
 
 def test_year_endpoint_invalid(client):
