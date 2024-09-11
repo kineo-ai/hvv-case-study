@@ -16,9 +16,7 @@ def load_data(filepath: str) -> pd.DataFrame:
     df = pd.read_csv(filepath)
     continents_income_filter = ~df["Entity"].isin(["Africa", "Asia", "Europe", "North America", "Oceania", "South America", "High-income countries", "Low-income countries", "Lower-middle-income countries", "Upper-middle-income countries", "World"])
 
-    filtered_df = df[continents_income_filter].copy()
-
-    return filtered_df
+    return df[continents_income_filter].copy()
 
 
 def calculate_country_stats(df: pd.DataFrame, country: str) -> dict | None:
