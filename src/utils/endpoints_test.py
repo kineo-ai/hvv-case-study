@@ -47,3 +47,33 @@ def test_country_endpoint_valid(client):
 def test_country_endpoint_invalid(client):
     response = client.get("/api/v1/country?name=InvalidCountry")
     assert response.status_code == 404
+
+
+def test_year_endpoint_valid(client):
+    response = client.get("/api/v1/year?value=2000")
+
+    assert response.status_code == 200
+
+    data = response.get_json()
+
+    # Check the 'year' field
+    assert "year" in data
+    assert data["year"] == 2000
+
+    # Check that 'statistics' field exists
+    assert "statistics" in data
+
+    for metric in EXPECTED_METRICS:
+        assert metric in data["statistics"]
+
+        # For each metric, check that the statistical keys are present
+        for stat in ["average", "median", "std_dev"]:
+            assert stat in data["statistics"][metric]
+
+            # Check that the values are floats
+            assert isinstance(data["statistics"][metric][stat], (float, int))
+
+
+def test_year_endpoint_invalid(client):
+    response = client.get("/api/v1/year?value=1000")
+    assert response.status_code == 404
