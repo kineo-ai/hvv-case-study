@@ -1,6 +1,18 @@
 # HVV Case Study for Infrastructure and Lot 2
 ## Lot 2: Backend
 
+## Getting started
+1. Clone this repository
+1. Build the image
+    ```bash
+    $ docker build -t hvv-case-studt -f ./images/base/Dockerfile .
+    ```
+1. Run the image
+    ```bash
+    $ docker run -p 5000:5000 hvv-case-study
+    ```
+1. Access the API on `localhost:5000`
+
 ### Infrastructure
 
 * The `dev` branch is the default branch/trunk for this source code.
@@ -19,9 +31,6 @@ For self-managed authentication, [Keycloak](https://github.com/keycloak/keycloak
 
 An alternative is to use a managed authentication provider, through a cloud operator of choice, for instance [Amazon Cognito](https://aws.amazon.com/cognito/) or [Azure AD B2C](https://azure.microsoft.com/en-us/products/active-directory-b2c/). In this case managing users/clients can be implemented using OAuth-flows through their preferred authentication provider without the need for managing each provider manually.
 
-> (*) This is equivalent behaviour to `on merge of PR of branch targeting dev`
-
-
 ### Discussion & Future Improvements
 
 * To use a production-level solution for [Flask](https://flask.palletsprojects.com/en/3.0.x/deploying/) and create TLS certificates for hosting the application.
@@ -30,3 +39,5 @@ An alternative is to use a managed authentication provider, through a cloud oper
   * Use the Content-Type `application/json` to give users the ability to send data that does not have to be URL encoded (e.g. not having to use %20).
   * Providing users with a list/options of valid inputs (e.g. Dropdown of country names).
 * Automatic Documentation Generation: By using modules such as [pydoc](https://docs.python.org/3/library/pydoc.html) and [Sphinx](https://github.com/sphinx-doc/sphinx) we would be able to generate canonical documentation for SDK and API reference.
+
+> (*) This is equivalent behaviour to `on merge of PR of branch targeting dev`
