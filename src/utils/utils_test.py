@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import random
 import string
-from utils import calculate_country_stats
+from utils.utils import calculate_country_stats
 
 # The ERROR_TOLERANCE is rather high as the approximate distributions are not accurate unless numerous measurements/years are created.
 ERROR_TOLERANCE = 1e-1
