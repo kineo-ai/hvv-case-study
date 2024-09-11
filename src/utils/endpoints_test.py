@@ -42,3 +42,8 @@ def test_country_endpoint_valid(client):
 
             # Check that the values are floats
             assert isinstance(data["statistics"][metric][stat], (float, int))
+
+
+def test_country_endpoint_invalid(client):
+    response = client.get("/api/v1/country?name=InvalidCountry")
+    assert response.status_code == 404
