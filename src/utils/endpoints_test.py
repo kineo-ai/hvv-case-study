@@ -45,6 +45,9 @@ def test_country_endpoint_valid(client):
 
 
 def test_country_endpoint_invalid(client):
+    response = client.get("/api/v1/country")
+    assert response.status_code == 400
+
     response = client.get("/api/v1/country?name=InvalidCountry")
     assert response.status_code == 404
 
@@ -75,5 +78,8 @@ def test_year_endpoint_valid(client):
 
 
 def test_year_endpoint_invalid(client):
+    response = client.get("/api/v1/year")
+    assert response.status_code == 400
+
     response = client.get("/api/v1/year?value=1000")
     assert response.status_code == 404
