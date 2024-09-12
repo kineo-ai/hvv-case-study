@@ -12,6 +12,14 @@
     $ docker run -p 5000:5000 hvv-case-study
     ```
 4. Access the API on `localhost:5000`
+5. To get the statistics for a country, use the `api/v1/country` endpoint with the country name as a query parameter. For example:
+    ```bash
+    $ curl -X GET http://localhost:5000/api/v1/country?name=germany
+    ```
+6. To get the statistics for a year, use the `api/v1/year` endpoint with the year as a query parameter. For example:
+    ```bash
+    $ curl -X GET http://localhost:5000/api/v1/year?value=2020
+    ```
 
 ### Infrastructure
 
